@@ -27,8 +27,9 @@ const send_message = async (chat_id, message) => {
     for(let i = 0; i < res.items.length && questions.length < 3500; i++) {
         questions += `${i + 1}. ${res.items[i].title}\nLink: ${res.items[i].link}\n\n`;
     }
-    console.log(res);
-    bot.sendMessage(-994700852, questions);
+    // console.log(res);
+    if(questions)
+        bot.sendMessage(-994700852, questions);
 }
 
 send_message();

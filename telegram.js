@@ -31,9 +31,16 @@ exports.listen_telegram_messages = async () => {
         let was_first_time = 0;
         if (chats.length == 0) {
             was_first_time = 1;
+            let first_name = "", last_name = "";
+            let chat_name = "";
+            if(msg.chat.type === "private") {
+                first_name = msg.chat.first_name ? msg.chat.first_name : "";
+                last_name = msg.chat.last_name ? msg.chat.last_name : "";
+                chat_name = first_name + " " + last_name;
+            }
             const chat = new Chat({
                 tg_chat_id: chat_id,
-                tg_chat_name: msg.chat.type === "group" ? msg.chat.title : msg.chat.first_name + " " + msg.chat.last_name,
+                tg_chat_name: msg.chat.type === "group" ? msg.chat.title : chat_name,
                 tg_chat_obj: msg.chat,
                 tg_chat_type: msg.chat.type,
                 status : "active"

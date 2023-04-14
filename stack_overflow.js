@@ -8,7 +8,7 @@ exports.get_stack_questions = async () => {
         const from = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
         const from_time = Math.floor(from.getTime() / 1000);
 
-        const query_url = `https://api.stackexchange.com/2.3/questions?order=asc&fromdate=${from_time}&todate=${now_time}&sort=creation&tagged=starknet&site=stackoverflow`;;
+        const query_url = `https://api.stackexchange.com/2.3/questions?order=asc&fromdate=${from_time}&todate=${now_time}&sort=creation&tagged=starknet;cairo;cairo-lang;zkp&site=stackoverflow`;;
 
         var config = {
             method: 'get',

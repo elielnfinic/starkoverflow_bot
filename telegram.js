@@ -62,7 +62,7 @@ exports.listen_telegram_messages = async () => {
                 const answer = msg.text;
                 const resp = await this.post_answer_to_stackoverflow(question_id, answer);
                 if (resp && resp.error) {
-                    bot.sendMessage(chatId, 'Error posting to StackOverflow.\nPlease try again later.\n\n' + resp.message);
+                    bot.sendMessage(chatId, 'Error posting to StackOverflow.\n\n' + resp.message);
                     return;
                 } else if (resp && resp.success) {
                     bot.sendMessage(chatId, 'Posted your answer to StackOverflow.');

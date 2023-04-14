@@ -11,6 +11,9 @@ const Group = new mongoose.Schema({
     },
     tg_group_link : {
         type: String,
+    },
+    tg_group_object : {
+        type: Object,
     }
 }, {timestamps: true});
 

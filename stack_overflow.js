@@ -17,6 +17,9 @@ exports.get_stack_questions = async () => {
         };
 
         const res = await axios(config);
+        for(let i = 0; i < res.data.items.length; i++) {
+            console.log(res.data.items[i].question_id);
+        }
         return res.data;
     } catch (err) {
         console.log(err);

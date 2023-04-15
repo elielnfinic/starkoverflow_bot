@@ -11,4 +11,4 @@ functions:
     events:
       # Invoke Lambda function every 10 minutes minute from Mon-Sun
       #  - schedule: cron(0/10 * ? * SUN-SAT *)
-      - schedule: rate(10 minute)
+      - schedule: cron(0/10 * ? * * *)

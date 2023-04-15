@@ -8,7 +8,12 @@ const token = process.env.TELEGRAM_API_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 
 exports.send_telegram_message = async (chat_id, message) => {
-    bot.sendMessage(chat_id, message);
+    console.log(`Sending to chat ${chat_id} message: ${message}`);
+    try{
+        bot.sendMessage(chat_id, message);
+    }catch(err){
+        console.log("Error sending msg ", err);
+    }
 }
 
 const bot_user_name = "StarkOverflow_bot";

@@ -30,7 +30,7 @@ module.exports.run = async (event, context, bot) => {
       const latest_question_id = chat.last_question_id ? chat.last_question_id : 0;
 
       if (process.env.ENV && process.env.ENV === "dev") {
-        if (chat_id == 2138899262 || chat_id == -879096220) {
+        if (chat_id == process.env.MY_TESTING_TG_CONVERSATION || chat_id == process.env.MY_TESTING_TG_GROUP_CONVERSATION) {
           console.log("It's eliel");
         } else {
           console.log("Not eliel");

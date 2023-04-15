@@ -11,7 +11,7 @@ exports.get_stack_questions = async () => {
         const from_time = Math.floor(from.getTime() / 1000);
         console.log(`From: ${from_time} - To: ${now_time}`);
 
-        const query_url = `https://api.stackexchange.com/2.3/questions?order=asc&fromdate=${from_time}&sort=creation&tagged=starknet;cairo;cairo-lang;zkp&site=stackoverflow`;
+        const query_url = `https://api.stackexchange.com/2.3/questions?order=asc&fromdate=${from_time}&sort=creation&tagged=starknet;cairo;cairo-lang&site=stackoverflow&access_token=${process.env.STACKOVERFLOW_TOKEN}&key=${process.env.STACKOVERFLOW_KEY}`;
 
         var config = {
             method: 'get',

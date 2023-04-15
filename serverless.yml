@@ -12,4 +12,4 @@ functions:
       # Invoke Lambda function every 30 minutes minute from Mon-Sun
       #  - schedule: cron(0/10 * ? * SUN-SAT *)
       # - schedule: cron(0/30 * ? * * *)
-      - schedule: rate(5 minutes)
+      - schedule: rate(30 minutes)

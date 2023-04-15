@@ -18,7 +18,11 @@ const Chat = new mongoose.Schema({
     status : {
         type: String,
         default: "active"
-    }
+    },
+    last_question_id : {
+        type: Number,
+        default: 0
+    },
 }, {timestamps: true});
 
 module.exports = mongoose.model("Chat", Chat);

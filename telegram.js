@@ -80,7 +80,7 @@ exports.listen_telegram_messages = async () => {
             }
         } else {
             console.log("Not a reply to me");
-            if (!was_first_time) bot.sendMessage(chatId, "Sorry, I can only accept incoming messages that are replies to Stackoverflow questions that I sent to you.");
+            //if (!was_first_time) bot.sendMessage(chatId, "Sorry, I can only accept incoming messages that are replies to Stackoverflow questions that I sent to you.");
             return;
         }
     });

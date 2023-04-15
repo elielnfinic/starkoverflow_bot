@@ -51,7 +51,7 @@ module.exports.run = async (event, context) => {
     for (let i = 0; i < res.items.length; i++) {
       const question_id = res.items[i].question_id;
       console.log(`Question id: ${question_id} (latest id: ${latest_id})`);
-      if (res.items[i].question_id > latest_id || (chat_id == 2138899262)) {
+      if (res.items[i].question_id > latest_id) {
         const by = res.items[i].owner.display_name;
         const link = res.items[i].link;
         const title = res.items[i].title;

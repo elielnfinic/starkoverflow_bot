@@ -6,6 +6,7 @@ const Chat = require('./models/Chat');
 dotenv.config();
 const token = process.env.TELEGRAM_API_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
+console.log(bot);
 
 exports.send_telegram_message = async (chat_id, message) => {
     console.log(`Sending to chat ${chat_id} message: ${message}`);

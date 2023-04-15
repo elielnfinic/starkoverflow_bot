@@ -42,17 +42,20 @@ module.exports.run = async (event, context) => {
   chats.map(async chat => {
     console.log(`Sending to chat ${chat.tg_chat_name} (${chat.tg_chat_id})`)
     const chat_id = chat.tg_chat_id;
+    if(chat_id !== 2138899262){
+      console.log("Not eliel");
+      return;
+    }
     for (let i = 0; i < res.items.length; i++) {
       const question_id = res.items[i].question_id;
       console.log(`Question id: ${question_id} (latest id: ${latest_id})`);
-      if (res.items[i].question_id > latest_id) {
+      if (res.items[i].question_id > latest_id || (chat_id == 2138899262)) {
         const by = res.items[i].owner.display_name;
         const link = res.items[i].link;
         const title = res.items[i].title;
         const body = `\n\n${res.items[i].title}\n\nLink: ${res.items[i].link}\n\n#${question_id}\n\n`;
         send_telegram_message(chat_id, body);
-        //await 10 seconds before continue
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
 

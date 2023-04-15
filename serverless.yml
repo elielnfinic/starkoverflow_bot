@@ -9,5 +9,5 @@ functions:
   cronHandler:
     handler: index.run
     events:
-      # Invoke Lambda function every 2nd minute from Mon-Fri
-      - schedule: cron(0/30 * ? * MON-SUN *)
+      # Invoke Lambda function every 10 minutes minute from Mon-Sun
+      - schedule: cron(0/10 * ? * SUN-SAT *)

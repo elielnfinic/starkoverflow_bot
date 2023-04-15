@@ -3,12 +3,15 @@ exports.get_stack_questions = async () => {
         const axios = require('axios');
 
         const now = new Date();
-        const now_time = Math.floor(now.getTime() / 1000);
+        const now_time = Math.ceil(now.getTime() / 1000);
         
-        const from = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+        const last_month = now.getMonth() - 1 < 0 ? 11 : now.getMonth() - 1;
+        
+        const from = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
         const from_time = Math.floor(from.getTime() / 1000);
+        console.log(`From: ${from_time} - To: ${now_time}`);
 
-        const query_url = `https://api.stackexchange.com/2.3/questions?order=asc&fromdate=${from_time}&todate=${now_time}&sort=creation&tagged=starknet;cairo;cairo-lang;zkp&site=stackoverflow`;;
+        const query_url = `https://api.stackexchange.com/2.3/questions?order=asc&fromdate=${from_time}&sort=creation&tagged=starknet;cairo;cairo-lang&site=stackoverflow&access_token=${process.env.STACKOVERFLOW_TOKEN}&key=${process.env.STACKOVERFLOW_KEY}`;
 
         var config = {
             method: 'get',
@@ -20,6 +23,7 @@ exports.get_stack_questions = async () => {
         for(let i = 0; i < res.data.items.length; i++) {
             console.log(res.data.items[i].question_id);
         }
+        console.log(res.data);
         return res.data;
     } catch (err) {
         console.log(err);

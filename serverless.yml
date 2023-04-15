@@ -4,11 +4,13 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: nodejs14.x
+  timeout: 600
 
 functions:
   cronHandler:
     handler: index.run
     events:
-      # Invoke Lambda function every 10 minutes minute from Mon-Sun
+      # Invoke Lambda function every 30 minutes minute from Mon-Sun
       #  - schedule: cron(0/10 * ? * SUN-SAT *)
-      - schedule: rate(10 minute)
+      # - schedule: cron(0/30 * ? * * *)
+      - schedule: rate(30 minutes)

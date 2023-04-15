@@ -1,15 +1,8 @@
 const dotenv = require('dotenv');
 
-const TelegramBot = require('node-telegram-bot-api');
 const Chat = require('./models/Chat');
 
 dotenv.config();
-const token = process.env.TELEGRAM_API_TOKEN;
-const bot = new TelegramBot(token, { polling: true });
-
-exports.send_telegram_message = async (chat_id, message) => {
-    bot.sendMessage(chat_id, message);
-}
 
 const bot_user_name = "StarkOverflow_bot";
 
@@ -24,8 +17,10 @@ function getLinkNumberID(text) {
 }
 
 
-exports.listen_telegram_messages = async () => {
+exports.listen_telegram_messages = async (bot) => {
+    console.log("LISTENNING TO MESSAGES");
     bot.on('message', async (msg) => {
+        console.log("Got message");
         const chat_id = msg.chat.id;
         const chats = await Chat.find({ tg_chat_id: chat_id }).exec();
         let was_first_time = 0;
@@ -55,7 +50,7 @@ exports.listen_telegram_messages = async () => {
         }
 
         const chatId = msg.chat.id;
-        console.log(chatId);
+        console.log("The chat ID", chatId);
 
         const is_reply_to_me = msg.reply_to_message && msg.reply_to_message.from.username === bot_user_name;
         if (is_reply_to_me) {

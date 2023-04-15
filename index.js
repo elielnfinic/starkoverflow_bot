@@ -3,7 +3,7 @@ const { get_stack_questions } = require('./stack_overflow');
 const mongoose = require("mongoose");
 const Config = require('./models/Config');
 const dotenv = require('dotenv');
-const { send_telegram_message } = require('./telegram');
+// const { send_telegram_message } = require('./telegram');
 const Chat = require('./models/Chat');
 dotenv.config();
 
@@ -13,68 +13,65 @@ mongoose.connection.on("error", err => {
   console.log(`DB connection error: ${err.message}`);
 });
 
-module.exports.run = async (event, context) => {
+module.exports.run = async (event, context, bot) => {
   const time = new Date();
-  // console.log(`Your cron function "${context.functionName}" ran at ${time}`);
 
-  let latest_id = 0;
-  let configs = await Config.find({});
-  if (configs.length > 0) {
-    latest_id = configs[0].last_stack_overflow_id;
-  }
-
-  const res = await get_stack_questions(latest_id);
-  let questions = '';
-  let counted_questions = 0;
-  let last_id = 0;
-  if (res.items.length == 0) {
-    console.log("No new questions");
-    return;
-  }
-
-  if (res.items.length) {
-    const new_lastest_item = res.items[res.items.length - 1].question_id;
-    await update_latest_id(new_lastest_item);
-  }
-
-  //Get all chats 
+  const res = await get_stack_questions();
   const chats = await Chat.find({ status: "active" }).exec();
-  chats.map(async chat => {
-    console.log(`Sending to chat ${chat.tg_chat_name} (${chat.tg_chat_id})`)
-    const chat_id = chat.tg_chat_id;
-    for (let i = 0; i < res.items.length; i++) {
-      const question_id = res.items[i].question_id;
-      console.log(`Question id: ${question_id} (latest id: ${latest_id})`);
-      if (res.items[i].question_id > latest_id) {
-        const by = res.items[i].owner.display_name;
-        const link = res.items[i].link;
-        const title = res.items[i].title;
-        const body = `\n\n${res.items[i].title}\n\nLink: ${res.items[i].link}\n\n#${question_id}\n\n`;
-        send_telegram_message(chat_id, body);
-        //await 10 seconds before continue
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
-    }
+  //console.log("The chats are ", chats);
 
-  });
+  console.log(`The are ${chats.length} chats`);
+  //chats.map(async chat => {
+  for (let i = 0; i < chats.length; i++) {
+    try {
+      const chat = chats[i];
+      console.log(`Chat ${i} is ${chat.tg_chat_name} (${chat.tg_chat_id})`);
+      const chat_id = chat.tg_chat_id;
+      const latest_question_id = chat.last_question_id ? chat.last_question_id : 0;
+
+      if (process.env.ENV && process.env.ENV === "dev") {
+        if (chat_id == process.env.MY_TESTING_TG_CONVERSATION || chat_id == process.env.MY_TESTING_TG_GROUP_CONVERSATION) {
+          console.log("It's eliel");
+        } else {
+          console.log("Not eliel");
+          continue;
+        }
+      }
+
+      let new_latest_question_id = 0;
+      console.log(`Number of questions ${res.items.length}`);
+      for (let i = 0; i < res.items.length; i++) {
+        console.log(`Looping at ${i} with question_id ${res.items[i].question_id}`);
+        const question_id = res.items[i].question_id;
+        if (question_id > latest_question_id) {
+          console.log("To send " + question_id + " to " + chat_id);
+          const by = res.items[i].owner.display_name;
+          const link = res.items[i].link;
+          const title = res.items[i].title;
+          const body = `\n\n${title}\n\nLink: ${link}\n\n#${question_id}\n\n`;
+          //send_telegram_message(chat_id, body);
+          console.log("Using bot ");
+          const tg_res = await bot.sendMessage(chat_id, body);
+          console.log("Result", tg_res);
+          if (tg_res && tg_res.message_id) {
+            new_latest_question_id = question_id;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+      if (new_latest_question_id > 0) {
+        chat.last_question_id = new_latest_question_id;
+        const res_save = await chat.save();
+        console.log(res_save);
+      }
+    } catch (err) {
+      console.log("Error looping chats ", err);
+    }
+  }
+
+  console.log("Ended looping");
+
 };
 
-const update_latest_id = async (last_id) => {
-  let configs = await Config.find({});
-  if (configs.length == 0) {
-    const config = new Config({
-      last_stack_overflow_id: last_id,
-      last_telegram_message_id: 0,
-    });
-    await config.save();
-  } else {
-    let config = configs[0];
-    // if (config.last_stack_overflow_id != last_id) {
-    config.last_stack_overflow_id = last_id;
-    const ress_ = await config.save();
-    console.log("Updated ", ress_);
-    // }
-  }
-}
 
 

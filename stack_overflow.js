@@ -23,6 +23,7 @@ exports.get_stack_questions = async () => {
         for(let i = 0; i < res.data.items.length; i++) {
             console.log(res.data.items[i].question_id);
         }
+        console.log(res.data);
         return res.data;
     } catch (err) {
         console.log(err);

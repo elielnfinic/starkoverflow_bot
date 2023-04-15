@@ -7,6 +7,8 @@ const { send_telegram_message } = require('./telegram');
 const Chat = require('./models/Chat');
 dotenv.config();
 
+
+
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true }).then(() => console.log("DB Connected"));
 
 mongoose.connection.on("error", err => {
@@ -15,6 +17,8 @@ mongoose.connection.on("error", err => {
 
 module.exports.run = async (event, context) => {
   const time = new Date();
+  const token = process.env.TELEGRAM_API_TOKEN;
+  const bot = new TelegramBot(token, { polling: true });
 
   const res = await get_stack_questions();
   const chats = await Chat.find({ status: "active" }).exec();
@@ -22,7 +26,16 @@ module.exports.run = async (event, context) => {
   chats.map(async chat => {
     const chat_id = chat.tg_chat_id;
     const latest_question_id = chat.last_question_id ? chat.last_question_id : 0;
-    
+
+    // if(process.env.ENV && process.env.ENV === "dev"){
+    //   if(chat_id == 2138899262 || chat_id == -879096220){
+    //     console.log("It's eliel");
+    //   }else{
+    //     console.log("Not eliel");
+    //     return;
+    //   }
+    // }
+
     let new_latest_question_id = 0;
     for (let i = 0; i < res.items.length; i++) {
       const question_id = res.items[i].question_id;
@@ -31,8 +44,12 @@ module.exports.run = async (event, context) => {
         const link = res.items[i].link;
         const title = res.items[i].title;
         const body = `\n\n${title}\n\nLink: ${link}\n\n#${question_id}\n\n`;
-        send_telegram_message(chat_id, body);
-        new_latest_question_id = question_id;
+        //send_telegram_message(chat_id, body);
+        const tg_res = await bot.sendMessage(chat_id, body);
+        console.log("Result",tg_res);
+        if(tg_res && tg_res.message_id){
+          new_latest_question_id = question_id;
+        }
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }

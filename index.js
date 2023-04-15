@@ -42,7 +42,9 @@ module.exports.run = async (event, context) => {
   chats.map(async chat => {
     console.log(`Sending to chat ${chat.tg_chat_name} (${chat.tg_chat_id})`)
     const chat_id = chat.tg_chat_id;
-    if(chat_id !== 2138899262){
+    if(chat_id == 2138899262 || chat_id == -994700852){
+      console.log("It's eliel");
+    }else{
       console.log("Not eliel");
       return;
     }
@@ -53,7 +55,7 @@ module.exports.run = async (event, context) => {
         const by = res.items[i].owner.display_name;
         const link = res.items[i].link;
         const title = res.items[i].title;
-        const body = `\n\n${res.items[i].title}\n\nLink: ${res.items[i].link}\n\n#${question_id}\n\n`;
+        const body = `\n\n${title}\n\nLink: ${link}\n\n#${question_id}\n\n`;
         send_telegram_message(chat_id, body);
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
